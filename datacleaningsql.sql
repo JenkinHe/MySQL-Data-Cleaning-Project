@@ -92,6 +92,59 @@ SELECT DISTINCT(industry)
 FROM layoffs_staging2
 ORDER BY 1;
 
+SELECT *
+FROM layoffs_staging2
+WHERE industry LIKE 'Crypto%';
+
+UPDATE layoffs_staging2
+SET industry = 'Crypto'
+WHERE industry LIKE 'Crypto%';
+
+SELECT DISTINCT country, TRIM(TRAILING '.' FROM country)
+FROM layoffs_staging2
+ORDER BY 1;
+
+UPDATE layoffs_staging2
+SET country = TRIM(TRAILING '.' FROM country)
+WHERE country LIKE 'United States%';
+
+SELECT `date`
+FROM layoffs_staging2;
+
+UPDATE layoffs_staging2
+SET `date` =STR_TO_DATE(`date`,'%m/%d/%Y');
+
+
+ALTER TABLE layoffs_staging2
+MODIFY COLUMN `date` DATE;
+
+SELECT DISTINCT *
+FROM layoffs_staging2
+WHERE INDUSTRY IS NULL
+OR INDUSTRY ='';
+
+SELECT  *
+FROM layoffs_staging2 t1
+JOIN layoffs_staging2 t2
+	ON t1.company =t2.company
+    AND t1.location = t2.location
+WHERE (t1.industry IS NULL OR t1.industry ='')
+AND t2.industry IS NOT NULL;
+
+-- set blanks to null
+
+UPDATE layoffs_staging2
+SET industry =NULL
+WHERE industry ='';
+
+
+UPDATE layoffs_staging2 t1
+JOIN layoffs_staging2 t2
+	ON t1.company =t2.company
+SET t1.industry =t2.industry
+WHERE t1.industry IS NULL 
+AND t2.industry IS NOT NULL;
+
 
 
 
